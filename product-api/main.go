@@ -2,15 +2,16 @@ package main
 
 import (
 	"context"
+	"go-ms/product-api/handlers"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"product/product-api/handlers"
 	"time"
 )
 
 func main() {
+
 	l := log.New(os.Stdout, "product-api", log.LstdFlags)
 	produHandler := handlers.NewProducts(l)
 	sm := http.NewServeMux()
