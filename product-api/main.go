@@ -30,6 +30,7 @@ func main() {
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/", produHandler.AddProduct)
 	postRouter.Use(produHandler.MiddlewareProductValidation)
+
 	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
 	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 

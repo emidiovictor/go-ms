@@ -20,9 +20,6 @@ import (
 	"go-ms/product-api/data"
 	"log"
 	"net/http"
-	"strconv"
-
-	"github.com/gorilla/mux"
 )
 
 //A list of products returns in the response
@@ -39,46 +36,6 @@ type Products struct {
 
 func NewProducts(logger *log.Logger) *Products {
 	return &Products{log: logger}
-}
-
-// swagger:route GET /products products listProduct
-// Returns a list of products
-// responses :
-// 200: productResponse
-
-func (p *Products) GetProducts(w http.ResponseWriter, r *http.Request) {
-	lp := data.GetProducts()
-	err := lp.ToJson(w)
-	if err != nil {
-		http.Error(w, "Unable to decode json", http.StatusInternalServerError)
-	}
-}
-func (p *Products) AddProduct(rw http.ResponseWriter, r *http.Request) {
-	p.log.Println("Trying to post a product")
-	prod := r.Context().Value(KeyProduct{}).(data.Product)
-
-	p.log.Printf("Prod: %#v", prod)
-	data.AddProduct(&prod)
-}
-
-func (p *Products) UpdateProduct(rw http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		http.Error(rw, "Impossible to cast the id", http.StatusBadRequest)
-		return
-	}
-	p.log.Println("Trying to PUT a product", id)
-	prod := r.Context().Value(KeyProduct{}).(data.Product)
-	err = data.UpdateProduct(id, &prod)
-	if err == data.ErrProductNotFound {
-		http.Error(rw, "Product not found", http.StatusNotFound)
-		return
-	}
-	if err != nil {
-		http.Error(rw, "Product not found", http.StatusInternalServerError)
-		return
-	}
 }
 
 type KeyProduct struct{}
